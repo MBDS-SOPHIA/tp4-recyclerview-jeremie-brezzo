@@ -36,6 +36,10 @@ class UserListAdapter(private val callback: Listener) : RecyclerView.Adapter<Use
         diffResult.dispatchUpdatesTo(this)
     }
 
+    fun getUsers(): List<User> {
+        return users
+    }
+
     class ListUserViewHolder(private val binding: ItemListUserBinding, private val callback: Listener) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user: User) {
             binding.apply {
