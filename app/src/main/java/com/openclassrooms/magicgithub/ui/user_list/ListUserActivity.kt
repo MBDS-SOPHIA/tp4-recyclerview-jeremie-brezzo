@@ -35,28 +35,32 @@ class ListUserActivity : AppCompatActivity(), UserListAdapter.Listener {
         adapter = UserListAdapter(this)
         binding.activityListUserRv.adapter = adapter
 
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
+            override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                val swipeFlags = 0
+                return makeMovementFlags(dragFlags, swipeFlags)
+            }
+
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                return false
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+                adapter.moveItem(fromPosition, toPosition)
+                return true
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val user = adapter.getUsers()[position] // Access users list via getter
-                user.isActive = !user.isActive // Ensure User class has isActive property
-                adapter.notifyItemChanged(position)
+                // No swipe action
             }
 
-            override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
-                val itemView = viewHolder.itemView
-                val background = if (dX > 0) Color.RED else Color.WHITE
-                itemView.setBackgroundColor(background)
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            override fun isLongPressDragEnabled(): Boolean {
+                return true
             }
         })
 
         itemTouchHelper.attachToRecyclerView(binding.activityListUserRv)
     }
+
 
     private fun configureFab() {
         binding.activityListUserFab.setOnClickListener {

@@ -9,6 +9,8 @@ import com.openclassrooms.magicgithub.model.User
 import com.openclassrooms.magicgithub.utils.UserDiffCallback
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.Glide
+import java.util.*
+import kotlin.collections.ArrayList
 
 class UserListAdapter(private val callback: Listener) : RecyclerView.Adapter<UserListAdapter.ListUserViewHolder>() {
     private var users: List<User> = ArrayList()
@@ -38,6 +40,19 @@ class UserListAdapter(private val callback: Listener) : RecyclerView.Adapter<Use
 
     fun getUsers(): List<User> {
         return users
+    }
+
+    fun moveItem(fromPosition: Int, toPosition: Int) {
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                Collections.swap(users, i, i + 1)
+            }
+        } else {
+            for (i in fromPosition downTo toPosition + 1) {
+                Collections.swap(users, i, i - 1)
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition)
     }
 
     class ListUserViewHolder(private val binding: ItemListUserBinding, private val callback: Listener) : RecyclerView.ViewHolder(binding.root) {
